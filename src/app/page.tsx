@@ -1,8 +1,30 @@
+"use client";
+import React, { useEffect } from "react";
+import { getMessaging, onMessage } from "firebase/messaging";
+import firebaseApp from "./utils/firebase";
+import { useFcmToken } from "./utils/hooks/useFcmToken";
+
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { RiAttachment2, RiSendPlaneFill } from "react-icons/ri";
 import { FaRegSmile } from "react-icons/fa";
 
 export default function Home() {
+  const { fcmToken, notificationPermissionStatus } = useFcmToken();
+
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      const messaging = getMessaging(firebaseApp);
+      const unsubscribe = onMessage(messaging, (payload) => {
+        console.log("Foreground push notification received:", payload);
+      });
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, []);
+
+  console.log(fcmToken);
+
   return (
     <main className="font-[Roboto Mono] h-[100vh] w-full bg-[#ccc4f4] flex justify-center items-center">
       <div
