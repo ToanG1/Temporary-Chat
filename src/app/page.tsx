@@ -23,7 +23,7 @@ export default function Home() {
     }
   }, []);
 
-  console.log(fcmToken);
+  console.log("FCM token: ", fcmToken);
 
   return (
     <main className="font-[Roboto Mono] h-[100vh] w-full bg-[#ccc4f4] flex justify-center items-center">
