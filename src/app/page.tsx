@@ -10,9 +10,24 @@ import { FaRegSmile } from "react-icons/fa";
 
 export default function Home() {
   const { fcmToken, notificationPermissionStatus } = useFcmToken();
+  console.log(fcmToken);
 
   useEffect(() => {
     if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/firebase-messaging-sw.js")
+        .then((registration) => {
+          console.log(
+            "Service Worker registered with scope:",
+            registration.scope
+          );
+        })
+        .catch((err) => {
+          console.log("Service Worker registration failed:", err);
+        });
+    }
+
+    if (typeof window !== "undefined" && "serviceWorker" in navigator) {
       const messaging = getMessaging(firebaseApp);
       const unsubscribe = onMessage(messaging, (payload) => {
         console.log("Foreground push notification received:", payload);
@@ -21,9 +36,11 @@ export default function Home() {
         unsubscribe();
       };
     }
-  }, []);
 
-  console.log("FCM token: ", fcmToken);
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      console.log("Service Worker message received:", event.data);
+    });
+  }, []);
 
   return (
     <main className="font-[Roboto Mono] h-[100vh] w-full bg-[#ccc4f4] flex justify-center items-center">
